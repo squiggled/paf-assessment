@@ -53,14 +53,12 @@ public class ListingsRepository {
 	/*
 	 * Write the native MongoDB query that you will be using for this method
 	 * inside this comment block
-	 db.listings.find(
-		{
-			{"address.suburb": {$regex: "lily", $options: "i"}, 
-		{price: {$lte:: 50}, 
-		{accommodates: {$gte:: 4}, 
-		{min_nights: $lte: 5}
-		},
-{"name": 1, 'accommodates': 1, "price": 1});
+	db.listings.find({
+			"address.suburb": {$regex: "lily", $options: "i"}, 
+			"price": {$lte: 50}, 
+			"accommodates": {$gte: 4}, 
+			"min_nights": {$lte: 5}},
+		{"_id": 1, "name": 1, "accommodates": 1, "price": 1});
 	 */
 	public List<AccommodationSummary> findListings(String suburb, int persons, int duration, float priceRange) {
 		Query q = new Query();
