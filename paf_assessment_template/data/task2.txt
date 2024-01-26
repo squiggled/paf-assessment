@@ -1,6 +1,8 @@
 Write your Task 2 answers in this file
 for local:
 mongoimport -h localhost --port 27017 -d bedandbreakfast -c listings_and_reviews --file data/listings.json   
+for railway:
+mongoimport --uri="mongodb://mongo:Bhd3G5Ef-ahb42e2H-CaGAbE6-acHdAE@monorail.proxy.rlwy.net:49690/bedandbreakfast?authSource=admin&authMechanism=SCRAM-SHA-1" --collection=listings_and_reviews --file=data/listings.json
 
 2.2;
 db.listings_and_reviews.aggregate([
@@ -10,15 +12,20 @@ db.listings_and_reviews.aggregate([
 
 2.3
 db.listings.aggregate([
-{$unwind: "$reviews"},
-{$project : {
-                "date": "$reviews.date", "listing_id": "$reviews.listing_id", "_id": 0,
-                reviewer_name: { $replaceAll: { input: "$reviews.reviewer_name", find: ",", replacement: "" }},
-                comments: { $replaceAll: { input: "$reviews.comments", find: "\n",  replacement: "" }},
-                comments: { $replaceAll: { input: "$reviews.comments", find: "rn",  replacement: "" }}
-                 
-            }},
-{$out: "reviews"}
+    { $unwind: "$reviews" },
+    { 
+        $project: {"date": "$reviews.date", "listing_id": "$reviews.listing_id", "reviewer_name": { 
+                $replaceAll: {input: "$reviews.reviewer_name", find: ",", replacement: ""
+                }
+            },
+            "comments": { 
+                $replaceAll: {input: {
+                    $replaceAll: {input: "$reviews.comments", find: "\n", replacement: ""}
+                        }, find: "\r",  replacement: "" }},
+            "_id": 0
+        }
+    },
+    {$out: "reviews" }
 ])
 
 

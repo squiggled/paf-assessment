@@ -11,7 +11,7 @@ CREATE table users (
     PRIMARY KEY(email)
 );
 create table reviews(
-    id INT,
+    id INT auto_increment,
     date TIMESTAMP,
     listing_id VARCHAR(20) NOT NULL,
     reviewer_name VARCHAR(64) NOT NULL,

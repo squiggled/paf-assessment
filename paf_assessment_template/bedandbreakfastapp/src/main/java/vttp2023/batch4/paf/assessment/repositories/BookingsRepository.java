@@ -40,6 +40,9 @@ public class BookingsRepository {
 	// IMPORTANT: DO NOT MODIFY THE SIGNATURE OF THIS METHOD.
 	// You may only add throw exceptions to this method
 	public void newBookings(Bookings bookings) {
+		System.out.println("in repo listing id" + bookings.getListingId());
+		System.out.println("in repo booking id" + bookings.getBookingId());
+		System.out.println("in repo dur" + bookings.getDuration());
 		template.update(Queries.SQL_CREATE_BOOKING,bookings.getBookingId(), bookings.getListingId(), bookings.getDuration(), bookings.getEmail());
 	}
 

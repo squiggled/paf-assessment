@@ -1,5 +1,7 @@
 package vttp2023.batch4.paf.assessment.controllers;
 
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +22,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import vttp2023.batch4.paf.assessment.models.Accommodation;
 import vttp2023.batch4.paf.assessment.models.Bookings;
 import vttp2023.batch4.paf.assessment.models.User;
@@ -97,49 +101,35 @@ public class BnBController {
 
 	// TODO: Task 6
 	// @PostMapping("/accommodation")
-	@PostMapping(path = "/accommodation")
-	public ResponseEntity<String> createBooking(@RequestBody MultiValueMap<String, String> posting){
-		System.out.println("listing id" + posting.getFirst("id"));
-		// posting.setListingId(listingId);
-		Optional<User> userOpt = bookingsRepo.doesUserExist(posting.getFirst("email"));
+	@PostMapping(path = "/accommodation", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> createBooking(@RequestBody String posting){
+		Reader reader = new StringReader(posting); 
+
+        JsonReader jsonReader = Json.createReader(reader);
+
+        JsonObject j = jsonReader.readObject(); 
+        
+        String id = j.getString("id"); 
+        String email = j.getString("email");
+        Integer nights = j.getInt("nights");
+        String name = j.getString("name");
+		Bookings booking = new Bookings();
+		booking.setListingId(id);
+		booking.setEmail(email);
+		booking.setDuration(nights);
+		booking.setName(name);
+
+		Optional<User> userOpt = bookingsRepo.doesUserExist(email);
 		if (!userOpt.isPresent()){
-			User user = new User(posting.getFirst("email"), posting.getFirst("name"));
+			User user = new User(email, name);
 			bookingsRepo.newUser(user);
 		}
-		Bookings booking = new Bookings();
-		booking.setListingId(posting.getFirst("id"));
-		booking.setEmail(posting.getFirst("email"));
-		booking.setName(posting.getFirst("name"));
-		booking.setDuration(Integer.parseInt(posting.getFirst("nights")));
+		
 		listingsSvc.createBooking(booking);
 		return ResponseEntity
                         .status(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
                         .body("{}");
 	}
-	/*
-	header
-	 Connection:
-	keep-alive
-	Content-Type:
-	application/json
-	Accept:
-application/json, text/plain, *
-	Date:
-	Fri, 26 Jan 2024 05:41:13 GMT
-	payload
-	{name: "Barney rubble", email: "barney@gmail.com", nights: 2, id: "10109896"}
-	email
-	: 
-	"barney@gmail.com"
-	id
-	: 
-	"10109896"
-	name
-	: 
-	"Barney rubble"
-	nights
-	: 
-	2
-	 */
+	
 }
