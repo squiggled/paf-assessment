@@ -30,7 +30,7 @@ import vttp2023.batch4.paf.assessment.models.User;
 import vttp2023.batch4.paf.assessment.repositories.BookingsRepository;
 import vttp2023.batch4.paf.assessment.repositories.ListingsRepository;
 import vttp2023.batch4.paf.assessment.services.ListingsService;
-import vttp2023.batch4.paf.exceptions.UserNotFoundException;
+import vttp2023.batch4.paf.exceptions.BookingFailedException;
 import vttp2023.batch4.paf.assessment.Utils;
 
 @Controller
@@ -122,10 +122,29 @@ public class BnBController {
 		Optional<User> userOpt = bookingsRepo.doesUserExist(email);
 		if (!userOpt.isPresent()){
 			User user = new User(email, name);
-			bookingsRepo.newUser(user);
+			
+			try {
+				listingsSvc.createUser(user);
+			} catch (BookingFailedException e){
+				System.out.println("Unable to add user: " + e.getMessage());
+				JsonObject msg = Json.createObjectBuilder().add("message", "unable to add user").build();
+				return ResponseEntity
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(msg.toString());
+			}
+		}
+		try {
+			listingsSvc.createBooking(booking);
+		} catch (BookingFailedException e) {
+			System.out.println("Unable to book: " + e.getMessage());
+				JsonObject msg = Json.createObjectBuilder().add("message", "unable to book").build();
+				return ResponseEntity
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(msg.toString());
 		}
 		
-		listingsSvc.createBooking(booking);
 		return ResponseEntity
                         .status(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)

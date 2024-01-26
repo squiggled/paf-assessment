@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import vttp2023.batch4.paf.assessment.models.Bookings;
 import vttp2023.batch4.paf.assessment.models.User;
+import vttp2023.batch4.paf.exceptions.BookingFailedException;
 
 @Repository
 public class BookingsRepository {
@@ -32,18 +33,21 @@ public class BookingsRepository {
 	// TODO: Task 6
 	// IMPORTANT: DO NOT MODIFY THE SIGNATURE OF THIS METHOD.
 	// You may only add throw exceptions to this method
-	public void newUser(User user) {
-		template.update(Queries.SQL_CREATE_USER, user.email(), user.name());
+	public void newUser(User user) throws BookingFailedException{
+		if (template.update(Queries.SQL_CREATE_USER, user.email(), user.name())<1){
+			throw new BookingFailedException();
+		}
 	}
 
 	// TODO: Task 6
 	// IMPORTANT: DO NOT MODIFY THE SIGNATURE OF THIS METHOD.
 	// You may only add throw exceptions to this method
-	public void newBookings(Bookings bookings) {
-		System.out.println("in repo listing id" + bookings.getListingId());
-		System.out.println("in repo booking id" + bookings.getBookingId());
-		System.out.println("in repo dur" + bookings.getDuration());
-		template.update(Queries.SQL_CREATE_BOOKING,bookings.getBookingId(), bookings.getListingId(), bookings.getDuration(), bookings.getEmail());
+	public void newBookings(Bookings bookings) throws BookingFailedException{
+		if (template.update(Queries.SQL_CREATE_BOOKING,bookings.getBookingId(), bookings.getListingId(), bookings.getDuration(), bookings.getEmail())<1){
+			throw new BookingFailedException();
+		}
+		
+		
 	}
 
 	public Optional<User> doesUserExist(String email) {
