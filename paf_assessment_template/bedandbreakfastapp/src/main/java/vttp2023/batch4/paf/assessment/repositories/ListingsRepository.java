@@ -29,8 +29,9 @@ public class ListingsRepository {
 	/*
 	 * Write the native MongoDB query that you will be using for this method
 	 * inside this comment block
-	 * eg. db.listings.find({}, {suburb: 1, '_id': 0})
-	 *
+	 * db.listings.find(
+		{"address.country": {$regex: "australia", $options: "i"}},
+		{"address.suburb": 1, '_id': 0});
 	 */
 	public List<String> getSuburbs(String country) {
 		Query q = new Query();
@@ -52,16 +53,21 @@ public class ListingsRepository {
 	/*
 	 * Write the native MongoDB query that you will be using for this method
 	 * inside this comment block
-	 * eg. db.bffs.find({ name: 'fred }) 
-	 *
-	 *
+	 db.listings.find(
+		{
+			{"address.suburb": {$regex: "lily", $options: "i"}, 
+		{price: {$lte:: 50}, 
+		{accommodates: {$gte:: 4}, 
+		{min_nights: $lte: 5}
+		},
+{"name": 1, 'accommodates': 1, "price": 1});
 	 */
 	public List<AccommodationSummary> findListings(String suburb, int persons, int duration, float priceRange) {
 		Query q = new Query();
 		q.addCriteria(Criteria.where("address.suburb").regex(suburb, "i")
 				.and("price").lte(priceRange)
 				.and("accommodates").gte(persons)
-				.and("min_nights").lte(persons))
+				.and("min_nights").lte(duration))
 				.with(Sort.by(Direction.DESC, "price"));
 		q.fields().include("_id", "name", "accommodates", "price");
 		List<Document> listingsRes = template.find(q, Document.class, "listings");
