@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,7 +21,12 @@ import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonArrayBuilder;
 import vttp2023.batch4.paf.assessment.models.Accommodation;
+import vttp2023.batch4.paf.assessment.models.Bookings;
+import vttp2023.batch4.paf.assessment.models.User;
+import vttp2023.batch4.paf.assessment.repositories.BookingsRepository;
+import vttp2023.batch4.paf.assessment.repositories.ListingsRepository;
 import vttp2023.batch4.paf.assessment.services.ListingsService;
+import vttp2023.batch4.paf.exceptions.UserNotFoundException;
 import vttp2023.batch4.paf.assessment.Utils;
 
 @Controller
@@ -29,6 +37,9 @@ public class BnBController {
 
 	@Autowired
 	private ListingsService listingsSvc;
+
+	@Autowired
+	private BookingsRepository bookingsRepo;
 	
 	// IMPORTANT: DO NOT MODIFY THIS METHOD UNLESS REQUESTED TO DO SO
 	// If this method is changed, any assessment task relying on this method will
@@ -85,5 +96,50 @@ public class BnBController {
 	}
 
 	// TODO: Task 6
-
+	// @PostMapping("/accommodation")
+	@PostMapping(path = "/accommodation")
+	public ResponseEntity<String> createBooking(@RequestBody MultiValueMap<String, String> posting){
+		System.out.println("listing id" + posting.getFirst("id"));
+		// posting.setListingId(listingId);
+		Optional<User> userOpt = bookingsRepo.doesUserExist(posting.getFirst("email"));
+		if (!userOpt.isPresent()){
+			User user = new User(posting.getFirst("email"), posting.getFirst("name"));
+			bookingsRepo.newUser(user);
+		}
+		Bookings booking = new Bookings();
+		booking.setListingId(posting.getFirst("id"));
+		booking.setEmail(posting.getFirst("email"));
+		booking.setName(posting.getFirst("name"));
+		booking.setDuration(Integer.parseInt(posting.getFirst("nights")));
+		listingsSvc.createBooking(booking);
+		return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body("{}");
+	}
+	/*
+	header
+	 Connection:
+	keep-alive
+	Content-Type:
+	application/json
+	Accept:
+application/json, text/plain, *
+	Date:
+	Fri, 26 Jan 2024 05:41:13 GMT
+	payload
+	{name: "Barney rubble", email: "barney@gmail.com", nights: 2, id: "10109896"}
+	email
+	: 
+	"barney@gmail.com"
+	id
+	: 
+	"10109896"
+	name
+	: 
+	"Barney rubble"
+	nights
+	: 
+	2
+	 */
 }

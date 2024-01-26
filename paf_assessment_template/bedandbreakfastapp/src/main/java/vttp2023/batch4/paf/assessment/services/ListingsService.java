@@ -9,7 +9,10 @@ import org.springframework.stereotype.Service;
 import vttp2023.batch4.paf.assessment.models.Accommodation;
 import vttp2023.batch4.paf.assessment.models.AccommodationSummary;
 import vttp2023.batch4.paf.assessment.models.Bookings;
+import vttp2023.batch4.paf.assessment.models.User;
+import vttp2023.batch4.paf.assessment.repositories.BookingsRepository;
 import vttp2023.batch4.paf.assessment.repositories.ListingsRepository;
+import vttp2023.batch4.paf.exceptions.UserNotFoundException;
 
 @Service
 public class ListingsService {
@@ -18,6 +21,8 @@ public class ListingsService {
 
 	@Autowired
 	private ListingsRepository listingsRepo;
+	@Autowired
+	private BookingsRepository bookingsRepo;
 
 	@Autowired
 	private ForexService forexSvc;
@@ -56,7 +61,8 @@ public class ListingsService {
 	// TODO: Task 6 
 	// IMPORTANT: DO NOT MODIFY THE SIGNATURE OF THIS METHOD.
 	// You may only add annotations and throw exceptions to this method
-	public void createBooking(Bookings booking) {
+	public void createBooking(Bookings booking){
+		bookingsRepo.newBookings(booking);
 	}
 
 }
