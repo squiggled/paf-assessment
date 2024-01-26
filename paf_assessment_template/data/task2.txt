@@ -9,140 +9,18 @@ db.listings_and_reviews.aggregate([
 ])
 
 2.3
+db.listings.aggregate([
+{$unwind: "$reviews"},
+{$project: {"reviews._id": 1, "reviews.date": 1, "reviews.listing_id": 1, "reviews.reviewer_name": 1, "reviews.comments":1 }}
+])
+
+db.listings.aggregate([
+{$unwind: "$reviews"},
+{$project: {"reviews._id": 1, "reviews.date": 1, "reviews.listing_id": 1, "reviews.reviewer_name": 1, "reviews.comments":1 }},
 {
-    "_id" : "10209136",
-    "listing_url" : "https://www.airbnb.com/rooms/10209136",
-    "name" : "Friendly Apartment, 10m from Manly",
-    "summary" : "A friendly apartment block where everyone knows each other and there is a strong communal vibe. Property has a huge backyard with vege garden and skate ramp. 7min walk to the beach and 2min to buses.",
-    "space" : "Great bedroom with a queen bed and window with views facing out over Balgowlah area, with great views of sunset. Large cupboards and drawers available for storage space.",
-    "description" : "A friendly apartment block where everyone knows each other and there is a strong communal vibe. Property has a huge backyard with vege garden and skate ramp. 7min walk to the beach and 2min to buses. Great bedroom with a queen bed and window with views facing out over Balgowlah area, with great views of sunset. Large cupboards and drawers available for storage space. You will have access to kitchen, bathroom, lounge room, separate laundry and well as the large garden space. I will be contactable by phone, housemate is friendly man who love meeting new people. All other apartment tenants are also very helpful and welcoming. Fairlight is the suburb between Manly and Balgowlah. It is quiet, close to the water and no more than 10mins away from everything you could need. Balgowlah shops is a 10 min walk with many cafes and restaurants. Manly is a 15min walk away, a very nice walk along the water. 3 mins from Sydney Rd where you can get a bus to Manly or the City easily. 15 min walk to Manly",
-    "neighborhood_overview" : "Fairlight is the suburb between Manly and Balgowlah. It is quiet, close to the water and no more than 10mins away from everything you could need. Balgowlah shops is a 10 min walk with many cafes and restaurants. Manly is a 15min walk away, a very nice walk along the water.",
-    "notes" : "Everyone in the block of apartments know each other and will often hang out together in the backyard. Big mix of ages and professions- everyone loves surfing and skating. Also worth noting, there will be a party in the backyard on NYE which you'd be welcome to join.",
-    "transit" : "3 mins from Sydney Rd where you can get a bus to Manly or the City easily. 15 min walk to Manly Wharf to catch the ferry.",
-    "access" : "You will have access to kitchen, bathroom, lounge room, separate laundry and well as the large garden space.",
-    "interaction" : "I will be contactable by phone, housemate is friendly man who love meeting new people. All other apartment tenants are also very helpful and welcoming.",
-    "house_rules" : "This would best suit a down-to-earth, friendly person or couple who want to be near the water over the summer.  Non-smoking, no pets. Please do not have extra guests without notice.",
-    "property_type" : "Apartment",
-    "room_type" : "Private room",
-    "bed_type" : "Real Bed",
-    "cancellation_policy" : "flexible",
-    "last_scraped" : ISODate("2019-03-07T05:00:00.000+0000"),
-    "calendar_last_scraped" : ISODate("2019-03-07T05:00:00.000+0000"),
-    "first_review" : ISODate("2016-01-24T05:00:00.000+0000"),
-    "last_review" : ISODate("2016-02-16T05:00:00.000+0000"),
-    "accommodates" : NumberInt(2),
-    "bedrooms" : NumberInt(1),
-    "beds" : NumberInt(1),
-    "number_of_reviews" : NumberInt(4),
-    "bathrooms" : NumberDecimal("1.0"),
-    "amenities" : [
-        "Internet",
-        "Wifi",
-        "Kitchen",
-        "Free parking on premises",
-        "Heating",
-        "Family/kid friendly",
-        "Washer",
-        "Dryer",
-        "First aid kit",
-        "Essentials"
-    ],
-    "price" : NumberDecimal("36.00"),
-    "extra_people" : NumberDecimal("20.00"),
-    "guests_included" : NumberDecimal("2"),
-    "images" : {
-        "thumbnail_url" : "",
-        "medium_url" : "",
-        "picture_url" : "https://a0.muscache.com/im/pictures/f2da856f-1eb3-4b89-af8e-24e95322625d.jpg?aki_policy=large",
-        "xl_picture_url" : ""
-    },
-    "host" : {
-        "host_id" : "52453573",
-        "host_url" : "https://www.airbnb.com/users/show/52453573",
-        "host_name" : "Isaac",
-        "host_location" : "Sydney, New South Wales, Australia",
-        "host_about" : "",
-        "host_thumbnail_url" : "https://a0.muscache.com/im/pictures/4c3ec070-d880-4c2b-80ab-5009f416cc43.jpg?aki_policy=profile_small",
-        "host_picture_url" : "https://a0.muscache.com/im/pictures/4c3ec070-d880-4c2b-80ab-5009f416cc43.jpg?aki_policy=profile_x_medium",
-        "host_neighbourhood" : "",
-        "host_is_superhost" : false,
-        "host_has_profile_pic" : true,
-        "host_identity_verified" : true,
-        "host_listings_count" : NumberInt(1),
-        "host_total_listings_count" : NumberInt(1),
-        "host_verifications" : [
-            "email",
-            "phone",
-            "reviews",
-            "jumio",
-            "government_id"
-        ]
-    },
-    "address" : {
-        "street" : "Fairlight, NSW, Australia",
-        "suburb" : "Fairlight",
-        "government_area" : "Manly",
-        "market" : "Sydney",
-        "country" : "Australia",
-        "country_code" : "AU",
-        "location" : {
-            "type" : "Point",
-            "coordinates" : [
-                151.26969,
-                -33.79629
-            ],
-            "is_location_exact" : false
-        }
-    },
-    "availability" : {
-        "availability_30" : NumberInt(0),
-        "availability_60" : NumberInt(0),
-        "availability_90" : NumberInt(0),
-        "availability_365" : NumberInt(0)
-    },
-    "review_scores" : {
-        "review_scores_accuracy" : NumberInt(10),
-        "review_scores_cleanliness" : NumberInt(10),
-        "review_scores_checkin" : NumberInt(9),
-        "review_scores_communication" : NumberInt(9),
-        "review_scores_location" : NumberInt(10),
-        "review_scores_value" : NumberInt(9),
-        "review_scores_rating" : NumberInt(95)
-    },
-    "reviews" : [
-        {
-            "_id" : "60490478",
-            "date" : ISODate("2016-01-24T05:00:00.000+0000"),
-            "listing_id" : "10209136",
-            "reviewer_id" : "53221994",
-            "reviewer_name" : "Ayrton",
-            "comments" : "This stunning place is definately the best accommodation we've had in australia! They make one feel very at home and let you take part on the good vibes ! It's tidy and very comfi.. I really recomend this place for everyone who likes to be surrounded by good people! \r\nthanks"
-        },
-        {
-            "_id" : "61730945",
-            "date" : ISODate("2016-02-07T05:00:00.000+0000"),
-            "listing_id" : "10209136",
-            "reviewer_id" : "46601878",
-            "reviewer_name" : "Shabilla",
-            "comments" : "Isaac's house was as beautiful as can be, the room had sunlight and was cozy, clean and neat. \r\ncozy small kitchen comes with the room and a lively backyard with a lovely and very friendly dog that is not shy to say hello to you.\r\n\r\nDefinitely recommend staying at Isaac's, as he is also very nice and kind.."
-        },
-        {
-            "_id" : "61850513",
-            "date" : ISODate("2016-02-08T05:00:00.000+0000"),
-            "listing_id" : "10209136",
-            "reviewer_id" : "19712217",
-            "reviewer_name" : "Alexandra",
-            "comments" : "Staying here is like \"going home\". You feel part of the family and everyone is really chilled. Highly recommend for those seeking a relaxing time away. Clean and great location. "
-        },
-        {
-            "_id" : "62779695",
-            "date" : ISODate("2016-02-16T05:00:00.000+0000"),
-            "listing_id" : "10209136",
-            "reviewer_id" : "53457963",
-            "reviewer_name" : "Svenja",
-            "comments" : "A very nice Apartment with a Great big garden and so many nice neighbours! Just awesome there! :)"
-        }
-    ],
-    "min_nights" : NumberInt(1),
-    "max_nights" : NumberInt(1125)
-}
+    $addFields:
+      {
+        resultObject: { $replaceAll: { input: "$reviews.reviewer_name", find: ",", replacement: "" }, {$input: "$reviews.comments", find: "\n", find: "\r", replacement: ""} }
+      }
+  }
+])
