@@ -1,11 +1,15 @@
 package vttp2023.batch4.paf.assessment.repositories;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
@@ -25,12 +29,24 @@ public class ListingsRepository {
 	/*
 	 * Write the native MongoDB query that you will be using for this method
 	 * inside this comment block
-	 * eg. db.bffs.find({ name: 'fred }) 
-	 *
+	 * eg. db.listings.find({}, {suburb: 1, '_id': 0})
 	 *
 	 */
 	public List<String> getSuburbs(String country) {
-		return null;
+		Query q = new Query();
+		q.addCriteria(Criteria.where("address.country").regex(country, "i"))
+			.fields().include("address.suburb").exclude("_id");
+		List<Document> address = template.find(q, Document.class, "listings");
+		List<String> suburbs = new ArrayList<>();
+		for (Document addDoc : address){
+			Document subDoc = addDoc.get("address", Document.class);
+			String oneSub = subDoc.get("suburb", String.class);
+			// System.out.println("onesub" + oneSub);
+			if ((!oneSub.equals(""))){
+				suburbs.add(oneSub);
+			}	
+		}
+		return suburbs;
 	}
 
 	/*
@@ -41,7 +57,24 @@ public class ListingsRepository {
 	 *
 	 */
 	public List<AccommodationSummary> findListings(String suburb, int persons, int duration, float priceRange) {
-		return null;
+		Query q = new Query();
+		q.addCriteria(Criteria.where("address.suburb").regex(suburb, "i")
+				.and("price").lte(priceRange)
+				.and("accommodates").gte(persons)
+				.and("min_nights").lte(persons))
+				.with(Sort.by(Direction.DESC, "price"));
+		q.fields().include("_id", "name", "accommodates", "price");
+		List<Document> listingsRes = template.find(q, Document.class, "listings");
+		List<AccommodationSummary> listings = new ArrayList<>();
+		for (Document listingDoc : listingsRes){
+			AccommodationSummary accom = new AccommodationSummary();
+			accom.setId(listingDoc.getString("_id"));
+			accom.setName(listingDoc.getString("name"));
+			accom.setAccomodates(listingDoc.getInteger("accommodates"));
+			accom.setPrice(listingDoc.get("price", Number.class).floatValue());
+			listings.add(accom);
+		}
+		return listings;
 	}
 
 	// IMPORTANT: DO NOT MODIFY THIS METHOD UNLESS REQUESTED TO DO SO

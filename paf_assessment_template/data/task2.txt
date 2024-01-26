@@ -11,16 +11,21 @@ db.listings_and_reviews.aggregate([
 2.3
 db.listings.aggregate([
 {$unwind: "$reviews"},
-{$project: {"reviews._id": 1, "reviews.date": 1, "reviews.listing_id": 1, "reviews.reviewer_name": 1, "reviews.comments":1 }}
+{$project : {
+                "date": "$reviews.date", "listing_id": "$reviews.listing_id", "_id": 0,
+                reviewer_name: { $replaceAll: { input: "$reviews.reviewer_name", find: ",", replacement: "" }},
+                comments: { $replaceAll: { input: "$reviews.comments", find: "\n",  replacement: "" }},
+                comments: { $replaceAll: { input: "$reviews.comments", find: "rn",  replacement: "" }}
+                 
+            }},
+{$out: "reviews"}
 ])
 
-db.listings.aggregate([
-{$unwind: "$reviews"},
-{$project: {"reviews._id": 1, "reviews.date": 1, "reviews.listing_id": 1, "reviews.reviewer_name": 1, "reviews.comments":1 }},
-{
-    $addFields:
-      {
-        resultObject: { $replaceAll: { input: "$reviews.reviewer_name", find: ",", replacement: "" }, {$input: "$reviews.comments", find: "\n", find: "\r", replacement: ""} }
-      }
-  }
-])
+
+2.4 
+db.listings.update({}, {$unset: {reviews:1}} , {multi: true});
+
+2.5 
+mongoexport --host localhost --db bedandbreakfast --collection reviews --type=csv --out reviews.csv --fields date,listing_id,reviewer_name,comments
+
+
